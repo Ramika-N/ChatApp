@@ -1,11 +1,18 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { Image, KeyboardAvoidingView, Platform, Pressable, StatusBar, Text, TextInput, View } from "react-native";
 import { CountryItem, CountryPicker } from 'react-native-country-codes-picker';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { RootStack } from '../../App';
+import { useNavigation } from '@react-navigation/native';
 // import "../../global.css";
 
+type ContactProps = NativeStackNavigationProp<RootStack, "ContactScreen">;
+
 export default function ContactScreen() {
+
+    const navigation = useNavigation<ContactProps>();
 
     const [show, setShow] = useState(false);
     const [countryCode, setCountryCode] = useState<CountryItem | null>(null);
@@ -51,7 +58,9 @@ export default function ContactScreen() {
                     </View>
 
                     <View className='mt-16 w-full'>
-                        <Pressable className='justify-center items-center bg-green-600 w-full h-14 rounded-full'>
+                        <Pressable className='justify-center items-center bg-green-600 w-full h-14 rounded-full'
+                            onPress={() => { navigation.replace("AvatarScreen"); }}
+                        >
                             <Text className='text-xl font-bold text-slate-50'>Next</Text>
                         </Pressable>
                     </View>
