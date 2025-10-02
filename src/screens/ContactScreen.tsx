@@ -1,11 +1,17 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { Image, KeyboardAvoidingView, Platform, Pressable, StatusBar, Text, View } from "react-native";
+import { useState } from 'react';
+import { Image, KeyboardAvoidingView, Platform, Pressable, StatusBar, Text, TextInput, View } from "react-native";
+import { CountryItem, CountryPicker } from 'react-native-country-codes-picker';
 import { SafeAreaView } from "react-native-safe-area-context";
 // import "../../global.css";
 
 export default function ContactScreen() {
+
+    const [show, setShow] = useState(false);
+    const [countryCode, setCountryCode] = useState<CountryItem | null>(null);
+
     return (
-        <SafeAreaView className="flex-1 bg-red-100 items-center">
+        <SafeAreaView className="flex-1 items-center">
 
             <StatusBar hidden={true} />
             <KeyboardAvoidingView behavior={Platform.OS === 'android' ? 'padding' : 'height'}
@@ -21,9 +27,32 @@ export default function ContactScreen() {
                         </Text>
                     </View>
                     <View className="mt-5 w-full">
-                        <Pressable className="flex w-full justify-center items-center flex-row h-16 border-b-4 border-b-green-600">
+
+                        <Pressable className="flex w-full justify-center items-center flex-row h-16 border-b-2 border-b-green-600"
+                            onPress={() => {
+                                setShow(true)
+                            }}
+                        >
                             <Text className="font-bold text-lg">Select Country</Text>
                             <AntDesign name="caret-down" size={18} color="black" style={{ marginTop: 5 }} />
+                        </Pressable>
+
+                        {/* <CountryPicker
+                            show={show} lang={'en'}
+                            pickerButtonOnPress={(item) => { setCountryCode(item); setShow(false); }}
+                            style={{ modal: { height: 300 } }}
+                        /> */}
+
+                        <View className='mt-2  flex flex-row justify-center'>
+                            <TextInput inputMode='tel' className='h-16 font-bold text-lg border-y-2 border-y-green-600 w-[18%] ' placeholder='+94' />
+                            <TextInput inputMode='tel' className='h-16 font-bold text-lg border-y-2 border-y-green-600 w-[80%] ml-2 ' placeholder='77 ### ####' />
+                        </View>
+
+                    </View>
+
+                    <View className='mt-16 w-full'>
+                        <Pressable className='justify-center items-center bg-green-600 w-full h-14 rounded-full'>
+                            <Text className='text-xl font-bold text-slate-50'>Next</Text>
                         </Pressable>
                     </View>
                 </View>
