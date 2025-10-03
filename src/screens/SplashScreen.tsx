@@ -1,13 +1,12 @@
 import { Image, StatusBar, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import "../../global.css"
+// import "../../global.css";
 import CircleShape from "../components/CircleShape";
 import { useEffect } from "react";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStack } from "../../App";
-import { runOnJS } from "react-native-worklets";
 import { useTheme } from "../theme/ThemeProvider";
 
 type Props = NativeStackNavigationProp<RootStack, "SplashScreen">;
