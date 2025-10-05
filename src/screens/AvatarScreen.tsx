@@ -3,6 +3,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from "react";
 import { useUserRegistration } from "../components/UserContext";
+import { validateProfileImage } from "../util/Validation";
+import { ALERT_TYPE, Toast } from "react-native-alert-notification";
+import { createNewAccount } from "../api/UserService";
 
 
 export default function AvatarScreen() {
@@ -86,8 +89,21 @@ export default function AvatarScreen() {
 
                 <View className="mt-2 w-full px-5">
                     <Pressable className="h-14 bg-green-600 items-center justify-center rounded-full"
-                        onPress={() => {
-                            console.log(userData);
+                        onPress={ async () => {
+                            const validProfile = validateProfileImage(
+                                userData.profileImage ? {
+                                    uri: userData.profileImage, type: "", fileSize: 0
+                                } : null);
+
+                            if (validProfile) {
+                                Toast.show({
+                                    type: ALERT_TYPE.WARNING,
+                                    title: "Warning",
+                                    textBody: validProfile,
+                                });
+                            } else {
+                                await createNewAccount(userData);
+                            }
                         }}
                     >
                         <Text className="font-bold text-lg text-slate-50">

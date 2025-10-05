@@ -28,83 +28,82 @@ export default function SignUpScreen() {
 
     return (
 
-        <AlertNotificationRoot>
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 100}
-                className="flex-1 items-center dark:bg-slate-950">
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 100}
+            className="flex-1 items-center dark:bg-slate-950">
 
-                <SafeAreaView className="p-5 justify-center items-center">
+            <SafeAreaView className="p-5 justify-center items-center">
 
-                    <StatusBar hidden={true} />
+                <StatusBar hidden={true} />
 
-                    <Image source={logo} className="h-48 w-36" />
+                <Image source={logo} className="h-48 w-36" />
 
-                    <View className="w-full justify-start items-start">
-                        <Text className="font-bold text-slate-500 dark:text-slate-100">
-                            Create your account and start the conversation TODAY.
-                        </Text>
+                <View className="w-full justify-start items-start">
+                    <Text className="font-bold text-slate-500 dark:text-slate-100">
+                        Create your account and start the conversation TODAY.
+                    </Text>
+                </View>
+                <View className="self-stretch">
+
+                    <View className="w-full my-3">
+                        <FloatingLabelInput label="Enter Your First Name"
+                            value={userData.firstName}
+                            onChangeText={(text) => {
+                                setUserData((previous) => ({
+                                    ...previous,
+                                    firstName: text,
+                                }));
+                            }}
+                        />
                     </View>
-                    <View className="self-stretch">
-
-                        <View className="w-full my-3">
-                            <FloatingLabelInput label="Enter Your First Name"
-                                value={userData.firstName}
-                                onChangeText={(text) => {
-                                    setUserData((previous) => ({
-                                        ...previous,
-                                        firstName: text,
-                                    }));
-                                }}
-                            />
-                        </View>
-                        <View className="w-full my-3">
-                            <FloatingLabelInput label="Enter Your Last Name"
-                                value={userData.lastName}
-                                onChangeText={(text) => {
-                                    setUserData((previous) => ({
-                                        ...previous,
-                                        lastName: text,
-                                    }));
-                                }}
-                            />
-                        </View>
-
+                    <View className="w-full my-3">
+                        <FloatingLabelInput label="Enter Your Last Name"
+                            value={userData.lastName}
+                            onChangeText={(text) => {
+                                setUserData((previous) => ({
+                                    ...previous,
+                                    lastName: text,
+                                }));
+                            }}
+                        />
                     </View>
 
-                </SafeAreaView>
-
-                <View className="mt-1 w-full px-5">
-                    <Pressable className="bg-green-600 h-14 justify-center items-center rounded-xl"
-                        onPress={() => {
-
-                            let validFirstName = validateFirstName(userData.firstName);
-                            let validLastName = validateFirstName(userData.lastName);
-
-                            if (validFirstName) {
-                                Toast.show({
-                                    type: ALERT_TYPE.WARNING,
-                                    title: "Warning",
-                                    textBody: validFirstName,
-                                });
-                            } else if (validLastName) {
-                                Toast.show({
-                                    type: ALERT_TYPE.WARNING,
-                                    title: "Warning",
-                                    textBody: validLastName,
-                                });
-                            } else {
-                                navigation.replace("ContactScreen");
-                            }
-
-                        }}
-                    >
-                        <Text className="text-slate-100 dark:text-slate-100 font-bold text-lg ">
-                            Next
-                        </Text>
-                    </Pressable>
                 </View>
 
-            </KeyboardAvoidingView>
-        </AlertNotificationRoot>
+            </SafeAreaView>
+
+            <View className="mt-1 w-full px-5">
+                <Pressable className="bg-green-600 h-14 justify-center items-center rounded-xl"
+                    onPress={() => {
+
+                        let validFirstName = validateFirstName(userData.firstName);
+                        let validLastName = validateFirstName(userData.lastName);
+
+                        if (validFirstName) {
+                            Toast.show({
+                                type: ALERT_TYPE.WARNING,
+                                title: "Warning",
+                                textBody: validFirstName,
+                            });
+                        } else if (validLastName) {
+                            Toast.show({
+                                type: ALERT_TYPE.WARNING,
+                                title: "Warning",
+                                textBody: validLastName,
+                            });
+                        } else {
+                            navigation.replace("ContactScreen");
+                        }
+
+                    }}
+                >
+                    <Text className="text-slate-100 dark:text-slate-100 font-bold text-lg ">
+                        Next
+                    </Text>
+                </Pressable>
+            </View>
+
+        </KeyboardAvoidingView>
+
     );
 }
