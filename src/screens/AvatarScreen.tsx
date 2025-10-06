@@ -1,4 +1,4 @@
-import { FlatList, Image, Pressable, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Image, Pressable, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from 'expo-image-picker';
 import { useState } from "react";
@@ -6,9 +6,16 @@ import { useUserRegistration } from "../components/UserContext";
 import { validateProfileImage } from "../util/Validation";
 import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 import { createNewAccount } from "../api/UserService";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStack } from "../../App";
+import { useNavigation } from "@react-navigation/native";
 
+type AvatarScreenProps = NativeStackNavigationProp<RootStack, "AvatarScreen">;
 
 export default function AvatarScreen() {
+
+    const navigation = useNavigation<AvatarScreenProps>();
+    const [loading, setLoading] = useState(false);
 
     const [image, setImage] = useState<string | null>(null);
     const { userData, setUserData } = useUserRegistration();
@@ -88,8 +95,8 @@ export default function AvatarScreen() {
                 </View>
 
                 <View className="mt-2 w-full px-5">
-                    <Pressable className="h-14 bg-green-600 items-center justify-center rounded-full"
-                        onPress={ async () => {
+                    <Pressable disabled={loading ? true : false} className="h-14 bg-green-600 items-center justify-center rounded-full"
+                        onPress={async () => {
                             const validProfile = validateProfileImage(
                                 userData.profileImage ? {
                                     uri: userData.profileImage, type: "", fileSize: 0
@@ -102,13 +109,35 @@ export default function AvatarScreen() {
                                     textBody: validProfile,
                                 });
                             } else {
-                                await createNewAccount(userData);
+                                try {
+                                    setLoading(true);
+
+                                    const response = await createNewAccount(userData);
+
+                                    if (response.status) {
+                                        navigation.replace("HomeScreen");
+                                    } else {
+                                        Toast.show({
+                                            type: ALERT_TYPE.WARNING,
+                                            title: "Warning",
+                                            textBody: response.message,
+                                        });
+                                    }
+
+                                } catch (error) {
+                                    console.log(error);
+                                } finally {
+                                    setLoading(false);
+                                }
                             }
                         }}
                     >
-                        <Text className="font-bold text-lg text-slate-50">
-                            Create Account
-                        </Text>
+                        {loading ? (<ActivityIndicator size={"large"} color={"blue"} />) : (
+                            <Text className="font-bold text-lg text-slate-50">
+                                Create Account
+                            </Text>
+                        )}
+
                     </Pressable>
                 </View>
 
