@@ -5,6 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { RootStack } from "../../App";
 import { useLayoutEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { useSingleChat } from "../socket/UseSingleChat";
+import { Chat } from "../socket/chat";
 
 type Message = {
     id: number;
@@ -26,6 +28,8 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
 
     const { chatId, friendName, lastSeenTime, profileImage } = route.params;
 
+    const messages = useSingleChat(chatId) //chatId == friendIdF
+
     const [message, setMessage] = useState<Message[]>([
         { id: 3, text: "Hello, Kohomada?", sender: "me", time: "10:51 AM", status: "read" },
         { id: 2, text: "Hello", sender: "friend", time: "10:36 AM" },
@@ -38,8 +42,8 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
         navigation.setOptions({
             title: "",
             headerLeft: () => (
-                <View className="items-center flex-row gap-2">
-                    <Image source={require("../../assets/avatar/avatar-1.jpg")} className="h-14 w-14 rounded-full border-2 border-gray-400 p-1" />
+                <View className="items-center flex-row gap-2 ">
+                    <Image source={{ uri: profileImage }} className="h-14 w-14 rounded-full border-2 border-gray-400 p-1" />
                     <View className="space-y-2">
                         <Text className="font-bold text-2xl">{friendName}</Text>
                         <Text className="italic text-xs font-bold text-gray-500">Last Seen {lastSeenTime}</Text>
@@ -54,18 +58,20 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
         });
     }, [navigation]);
 
-    const renderItem = ({ item }: { item: Message }) => {
-        const isMe = item.sender === "me";
+    const renderItem = ({ item }: { item: Chat }) => {
+
+        const isMe = item.from.id !== chatId;
+
         return (
             <View className={`my-1 px-3 py-2 max-w-[75%] ${isMe
                 ? `self-end bg-green-600 rounded-bl-xl rounded-br-xl`
                 : `self-start bg-gray-700 rounded-tr-xl rounded-bl-xl rounded-br-xl`
                 }`}>
 
-                <Text className={`text-white text-base`}>{item.text}</Text>
+                <Text className={`text-white text-base`}>{item.lastMessage}</Text>
 
                 <View className="flex-row justify-end items-center mt-1">
-                    <Text className={`text-white italic text-xs me-2`}>{item.time}</Text>
+                    <Text className={`text-white italic text-xs me-2`}>{item.friendName}</Text>
                     {isMe &&
                         (<Ionicons
                             name={item.status === "read" ? "checkmark-done" : item.status === "delivered" ? "checkmark-done" : "checkmark"}
@@ -98,7 +104,7 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
         <SafeAreaView className="flex-1 bg-white " edges={["right", "bottom", "left"]}>
             <StatusBar hidden={false} />
             <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === "android" ? "padding" : "height"}>
-                <FlatList data={message} renderItem={renderItem} className="px-3 flex-1" inverted contentContainerStyle={{ paddingBottom: 60 }} keyExtractor={(item) => item.id.toString()} />
+                <FlatList data={messages} renderItem={renderItem} className="px-3 flex-1" inverted contentContainerStyle={{ paddingBottom: 60 }} keyExtractor={(_, index) => index.toString()} />
 
                 <View className="flex-row items-end p-2 bg-white">
                     <TextInput value={input} onChangeText={(text) => setInput(text)} multiline placeholder="Type a Message"
