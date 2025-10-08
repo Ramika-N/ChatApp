@@ -35,12 +35,14 @@ export default function HomeScreen() {
         });
     }, [navigation]);
 
-    const filterChats = chatList.filter((chat) => {
+    const filterChats = [...chatList].filter((chat) => {
         return (
             chat.friendName.toLowerCase().includes(search.toLowerCase()) ||
             chat.lastMessage.toLowerCase().includes(search.toLowerCase())
         );
-    });
+    }).sort(
+        (a, b) => new Date(b.lastTimeStamp).getTime() - new Date(a.lastTimeStamp).getTime()
+    );
 
     const renderItem = ({ item }: any) => (
         <TouchableOpacity className="flex-row items-center py-2 px-3 bg-gray-50 my-1"

@@ -27,7 +27,7 @@ export function useSingleChat(friendId: number) {
                 setMessage((prev) => [response.payload, ...prev]);
             }
             if (response.type === "friend_data") {
-                setMessage((prev) => [response.payload, ...prev]);
+                setFriend(response.payload);   
             }
 
         };
@@ -40,5 +40,5 @@ export function useSingleChat(friendId: number) {
 
     }, [socket, friendId])
 
-    return messages;
+    return {messages:messages,friend:friend};
 }

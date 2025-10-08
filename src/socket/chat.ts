@@ -5,22 +5,25 @@ export interface User {
     countryCode: string;
     contactNo: string;
     profileImage?: string;
+    created_at: string;
+    updated_at: string;
+    status: string;
 }
 
 export interface Chat {
-    id:number;
+    id: number;
     friendId: number;
-    friendName:string;
+    friendName: string;
     lastMessage: string;
-    lastTimeStamp:string;
-    unreadCount:number;
-    profileImage:string;
+    lastTimeStamp: string;
+    unreadCount: number;
+    profileImage: string;
     from: User;
     to: User;
     created_at: string;
     updated_at: string;
     status: string;
-    message:string;
+    message: string;
 }
 
 export interface WSRequest {

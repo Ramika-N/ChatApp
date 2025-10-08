@@ -30,7 +30,9 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
 
     const { chatId, friendName, lastSeenTime, profileImage } = route.params;
     const sendMessage = useSendChat();
-    const messages = useSingleChat(chatId) //chatId == friendIdF
+    const singleChat = useSingleChat(chatId) //chatId == friendIdF
+    const messages = singleChat.messages;
+    const friend = singleChat.friend;
     const [input, setInput] = useState('');
 
     useLayoutEffect(() => {
@@ -38,10 +40,19 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
             title: "",
             headerLeft: () => (
                 <View className="items-center flex-row gap-2 ">
+                    <TouchableOpacity className="justify-center items-center"
+                        onPress={() => {
+                            navigation.goBack();
+                        }}
+                    >
+                        <Ionicons name="arrow-back-sharp" size={24} color="black" />
+                    </TouchableOpacity>
                     <Image source={{ uri: profileImage }} className="h-14 w-14 rounded-full border-2 border-gray-400 p-1" />
                     <View className="space-y-2">
-                        <Text className="font-bold text-2xl">{friendName}</Text>
-                        <Text className="italic text-xs font-bold text-gray-500">Pending</Text>
+                        <Text className="font-bold text-2xl"> {friend ? friend.firstName + " " + friend.lastName : friendName}</Text>
+                        <Text className="italic text-xs font-bold text-gray-500">
+                            {friend?.status === "ONLINE" ? "Online" : `Last seen ${formatChatTime(friend?.updated_at ?? "")}`}
+                        </Text>
                     </View>
                 </View>
             ),
@@ -51,7 +62,7 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
                 </TouchableOpacity>
             ),
         });
-    }, [navigation]);
+    }, [navigation, friend]);
 
     const renderItem = ({ item }: { item: Chat }) => {
 
