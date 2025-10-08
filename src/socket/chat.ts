@@ -8,6 +8,7 @@ export interface User {
 }
 
 export interface Chat {
+    id:number;
     friendId: number;
     friendName:string;
     lastMessage: string;
@@ -16,9 +17,10 @@ export interface Chat {
     profileImage:string;
     from: User;
     to: User;
-    createdAt: string;
-    updatedAt: string;
+    created_at: string;
+    updated_at: string;
     status: string;
+    message:string;
 }
 
 export interface WSRequest {

@@ -7,6 +7,8 @@ import { useLayoutEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useSingleChat } from "../socket/UseSingleChat";
 import { Chat } from "../socket/chat";
+import { formatChatTime } from "../util/DateFormatter";
+import { useSendChat } from "../socket/UseSendChat";
 
 type Message = {
     id: number;
@@ -27,15 +29,8 @@ type SingleChatScreenProps = NativeStackScreenProps<RootStack, "SingleChatScreen
 export default function SingleChatScreen({ route, navigation }: SingleChatScreenProps) {
 
     const { chatId, friendName, lastSeenTime, profileImage } = route.params;
-
+    const sendMessage = useSendChat();
     const messages = useSingleChat(chatId) //chatId == friendIdF
-
-    const [message, setMessage] = useState<Message[]>([
-        { id: 3, text: "Hello, Kohomada?", sender: "me", time: "10:51 AM", status: "read" },
-        { id: 2, text: "Hello", sender: "friend", time: "10:36 AM" },
-        { id: 1, text: "Hi", sender: "friend", time: "10:00 AM" },
-    ]);
-
     const [input, setInput] = useState('');
 
     useLayoutEffect(() => {
@@ -46,7 +41,7 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
                     <Image source={{ uri: profileImage }} className="h-14 w-14 rounded-full border-2 border-gray-400 p-1" />
                     <View className="space-y-2">
                         <Text className="font-bold text-2xl">{friendName}</Text>
-                        <Text className="italic text-xs font-bold text-gray-500">Last Seen {lastSeenTime}</Text>
+                        <Text className="italic text-xs font-bold text-gray-500">Pending</Text>
                     </View>
                 </View>
             ),
@@ -68,15 +63,15 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
                 : `self-start bg-gray-700 rounded-tr-xl rounded-bl-xl rounded-br-xl`
                 }`}>
 
-                <Text className={`text-white text-base`}>{item.lastMessage}</Text>
+                <Text className={`text-white text-base`}>{item.message}</Text>
 
                 <View className="flex-row justify-end items-center mt-1">
-                    <Text className={`text-white italic text-xs me-2`}>{item.friendName}</Text>
+                    <Text className={`text-white italic text-xs me-2`}>{formatChatTime(item.created_at)}</Text>
                     {isMe &&
                         (<Ionicons
-                            name={item.status === "read" ? "checkmark-done" : item.status === "delivered" ? "checkmark-done" : "checkmark"}
+                            name={item.status === "READ" ? "checkmark-done" : item.status === "DELIVERED" ? "checkmark-done" : "checkmark"}
                             size={16}
-                            color={item.status === "read" ? "#21acf1ff" : "#9ca3af"} />
+                            color={item.status === "READ" ? "#21acf1ff" : "#9ca3af"} />
                         )}
                 </View>
 
@@ -84,21 +79,13 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
         );
     };
 
-    const sendMessage = () => {
-        if (input.trim()) {
-            const newMsg: Message = {
-                id: Date.now(),
-                text: input,
-                sender: "me",
-                time: Date.now().toString(),
-                status: "sent",
-            };
-            setMessage([newMsg, ...message]);
-            setInput("");
+    const handleSendChat = () => {
+        if (!input.trim()) {
+            return;
         }
-
-        return !input.trim();
-    };
+        sendMessage(chatId, input);
+        setInput("");
+    }
 
     return (
         <SafeAreaView className="flex-1 bg-white " edges={["right", "bottom", "left"]}>
@@ -110,7 +97,7 @@ export default function SingleChatScreen({ route, navigation }: SingleChatScreen
                     <TextInput value={input} onChangeText={(text) => setInput(text)} multiline placeholder="Type a Message"
                         className="flex-1 min-h-14 max-h-32 h-auto px-5 py-2 bg-gray-200 rounded-3xl text-base"
                     />
-                    <TouchableOpacity className="bg-green-600 w-14 h-14 items-center justify-center rounded-full" onPress={sendMessage}>
+                    <TouchableOpacity className="bg-green-600 w-14 h-14 items-center justify-center rounded-full" onPress={handleSendChat}>
                         <Ionicons name="send" size={24} color="white" />
                     </TouchableOpacity>
                 </View>

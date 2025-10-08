@@ -36,7 +36,7 @@ export type RootStack = {
 const Stack = createNativeStackNavigator<RootStack>();
 
 export default function App() {
-  const USER_ID = 2;
+  let USER_ID = 2;
   return (
     <AlertNotificationRoot>
       <WebSocketProvider userId={USER_ID}>
